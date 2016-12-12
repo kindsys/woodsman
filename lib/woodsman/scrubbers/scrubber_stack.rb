@@ -10,11 +10,11 @@ module Woodsman
       def self.default_stack
         stack = ScrubberStack.new
         # Silence good health checks by default.
-        stack << Scrubbers::SubstringSilencer.new('health_check_200_silencer', 'method=GET path=/health_check format=html controller=health_check/health_check action=index status=200')
+        # stack << Scrubbers::SubstringSilencer.new('health_check_200_silencer', 'method=GET path=/health_check format=html controller=health_check/health_check action=index status=200')
         stack << SsnScrubber.new
-        stack << KeyValueScrubber.new(:email_scrubber, :email, '****')
+        # stack << KeyValueScrubber.new(:email_scrubber, :email, '****')
         stack << KeyValueScrubber.new(:password_scrubber, :password, '****')
-        stack << RegexLineScrubber.new(:sql_email_scrubber, /(\["email", ").*?(?="\])/i, '\1****')
+        # stack << RegexLineScrubber.new(:sql_email_scrubber, /(\["email", ").*?(?="\])/i, '\1****')
         stack
       end
 
