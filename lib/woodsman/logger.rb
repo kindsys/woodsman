@@ -95,7 +95,7 @@ module Woodsman
         if block
           end_time = Time.now.to_f
           elapsed_time_ms = (end_time - start_time) * 1000
-          elapsed_time = " elapsed_time=#{elapsed_time_ms}"
+          elapsed_time = " elapsed_time=#{elapsed_time_ms.round(2)}"
         end
 
         if exception
@@ -116,6 +116,7 @@ module Woodsman
       msg, context_hash = context_hash, nil unless context_hash.respond_to?('each')
       msg = " #{msg}" if msg and msg.length > 0
 
+      return timed("event=\"#{name}#{msg}\"", context_hash, &block) if msg && msg.include?(' ')
       timed("event=#{name}#{msg}", context_hash, &block)
     end
 
