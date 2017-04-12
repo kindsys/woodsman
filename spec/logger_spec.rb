@@ -46,7 +46,7 @@ module Woodsman
     it 'has scrubbers by default' do
       new_logger = Logger.new(stdout_spy)
 
-      expect(new_logger.scrubber_names.size).to be >= 5
+      expect(new_logger.scrubber_names.size).to be >= 2
     end
 
     it 'has the ssn scrubber if initialized with common scrubbers' do
@@ -83,7 +83,7 @@ module Woodsman
       response = '<?xml version="1.0"><linkResponse status="500">Unable to link</linkResponse>'
       logger.event 'yodlee_failed', {request: request, response: response}, 'Unable to link account due to server error.'
 
-      expect(stdout_spy).to have_received(:info).with("event=yodlee_failed Unable to link account due to server error. request=<?xml&#32;version&#61;\"1.0\"><link><username&#32;xsi:type&#61;\"login\">jane888</username>\n<password>XXXXX</password> response=<?xml&#32;version&#61;\"1.0\"><linkResponse&#32;status&#61;\"500\">Unable&#32;to&#32;link</linkResponse>")
+      expect(stdout_spy).to have_received(:info).with("event=\"yodlee_failed Unable to link account due to server error.\" request=<?xml&#32;version&#61;\"1.0\"><link><username&#32;xsi:type&#61;\"login\">jane888</username>\n<password>XXXXX</password> response=<?xml&#32;version&#61;\"1.0\"><linkResponse&#32;status&#61;\"500\">Unable&#32;to&#32;link</linkResponse>")
     end
 
     it 'scrubs xml element contents' do
@@ -93,7 +93,7 @@ module Woodsman
       response = '<?xml version="1.0"><linkResponse status="500">Unable to link</linkResponse>'
       logger.event 'yodlee_failed', {request: request, response: response}, 'Unable to link account due to server error.'
 
-      expect(stdout_spy).to have_received(:info).with('event=yodlee_failed Unable to link account due to server error. request=<?xml&#32;version&#61;"1.0"><link><username&#32;xsi:type&#61;"login">jane888</username><password>XXXXX</password> response=<?xml&#32;version&#61;"1.0"><linkResponse&#32;status&#61;"500">Unable&#32;to&#32;link</linkResponse>')
+      expect(stdout_spy).to have_received(:info).with('event="yodlee_failed Unable to link account due to server error." request=<?xml&#32;version&#61;"1.0"><link><username&#32;xsi:type&#61;"login">jane888</username><password>XXXXX</password> response=<?xml&#32;version&#61;"1.0"><linkResponse&#32;status&#61;"500">Unable&#32;to&#32;link</linkResponse>')
     end
 
     it 'scrubs xml element contents with attributes' do
@@ -103,7 +103,7 @@ module Woodsman
       response = '<?xml version="1.0"><linkResponse status="500">Unable to link</linkResponse>'
       logger.event 'yodlee_failed', {request: request, response: response}, 'Unable to link account due to server error.'
 
-      expect(stdout_spy).to have_received(:info).with('event=yodlee_failed Unable to link account due to server error. request=<?xml&#32;version&#61;"1.0"><link><username&#32;xsi:type&#61;"login">jane888</username><password&#32;xsi:type&#61;"securepw">XXXXX</password> response=<?xml&#32;version&#61;"1.0"><linkResponse&#32;status&#61;"500">Unable&#32;to&#32;link</linkResponse>')
+      expect(stdout_spy).to have_received(:info).with('event="yodlee_failed Unable to link account due to server error." request=<?xml&#32;version&#61;"1.0"><link><username&#32;xsi:type&#61;"login">jane888</username><password&#32;xsi:type&#61;"securepw">XXXXX</password> response=<?xml&#32;version&#61;"1.0"><linkResponse&#32;status&#61;"500">Unable&#32;to&#32;link</linkResponse>')
     end
 
     it 'scrubs event context data' do
@@ -112,7 +112,7 @@ module Woodsman
 
       logger.event 'new_user', {user_slug: 'jane', ssn: '555-55-5555', password: 'opensesame'}, 'Added jane.'
 
-      expect(stdout_spy).to have_received(:info).with('event=new_user Added jane. user_slug=jane ssn=XXX-XX-XXXX password=XYZ')
+      expect(stdout_spy).to have_received(:info).with('event="new_user Added jane." user_slug=jane ssn=XXX-XX-XXXX password=XYZ')
     end
 
     it 'scrubs marketo specific info data' do
@@ -146,7 +146,7 @@ module Woodsman
       logger.scrubbers << Scrubbers::KeyValueScrubber.new('key_scrubber', :key, 'XYZ')
       logger.event 'new_user', {slug: 'jane', key: 'abacadabra'}, 'Added Jane.'
 
-      expect(stdout_spy).to have_received(:info).with('event=new_user Added Jane. slug=jane key=XYZ')
+      expect(stdout_spy).to have_received(:info).with('event="new_user Added Jane." slug=jane key=XYZ')
     end
 
     it 'scrubs log line with a strongly typed scrubber' do
@@ -209,7 +209,7 @@ module Woodsman
       logger.scrubbers << Scrubbers::SsnScrubber.new
       logger.event 'new_user', {slug: 'jane', ssn: '555-55-5555', beneficiary: '555-55-5555'}, 'Added Jane.'
 
-      expect(stdout_spy).to have_received(:info).with('event=new_user Added Jane. slug=jane ssn=XXX-XX-XXXX beneficiary=XXX-XX-XXXX')
+      expect(stdout_spy).to have_received(:info).with('event="new_user Added Jane." slug=jane ssn=XXX-XX-XXXX beneficiary=XXX-XX-XXXX')
     end
 
     it 'scrubs log lines with a SSN scrubber' do
@@ -334,11 +334,11 @@ module Woodsman
 
       log = Logger.new(stdout_spy, true, false)
       expect(log.backtrace_cleaner).to be_nil
-      expect(log.scrubbers.size).to be >= 5
+      expect(log.scrubbers.size).to be >= 2
 
       log = Logger.new(stdout_spy, true, true)
       expect(log.backtrace_cleaner).to be
-      expect(log.scrubbers.size).to be >= 5
+      expect(log.scrubbers.size).to be >= 2
     end
 
 # Hmm... It occurs to me after the fact that I could spy the timer, but unless you're stepping through the code w/ a
@@ -385,13 +385,13 @@ module Woodsman
     it 'logs events' do
       logger.event :killer_block_party, 'Blockless party'
 
-      expect(stdout_spy).to have_received(:info).with('event=killer_block_party Blockless party')
+      expect(stdout_spy).to have_received(:info).with('event="killer_block_party Blockless party"')
     end
 
     it 'logs events with attributes' do
       logger.event :killer_block_party, {time: '5pm', location: 'campus'}, 'Blockless party'
 
-      expect(stdout_spy).to have_received(:info).with('event=killer_block_party Blockless party time=5pm location=campus')
+      expect(stdout_spy).to have_received(:info).with('event="killer_block_party Blockless party" time=5pm location=campus')
     end
 
     it 'logs events with blocks' do
@@ -400,7 +400,7 @@ module Woodsman
       end
 
       expect(stdout_spy).to have_received(:debug).with("I'm in a block!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party2 All summer strong elapsed_time=0.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=\"killer_block_party2 All summer strong\" elapsed_time=0.\d+/)
     end
 
     it 'logs events with blocks and attributes' do
@@ -409,7 +409,7 @@ module Woodsman
       end
 
       expect(stdout_spy).to have_received(:debug).with("I'm in a block!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party3 All summer gone a=1 b=2 c=3 elapsed_time=0.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party3 All summer gone" a=1 b=2 c=3 elapsed_time=0.\d+/)
     end
 
     it 'logged event blocks can update attributes' do
@@ -421,7 +421,7 @@ module Woodsman
         log_data[:count] = 1
       end
 
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party3 All summer gone count=1 elapsed_time=0.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=\"killer_block_party3 All summer gone\" count=1 elapsed_time=0.\d+/)
     end
 
     it 'logs with context' do
@@ -470,16 +470,16 @@ module Woodsman
       expect(stdout_spy).to have_received(:debug).with('With MDC user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:info).with("I'm in a block! user=john ip=127.0.0.1")
       expect(stdout_spy).to have_received(:info).with(/Time block elapsed_time=0\.\d+ user=john ip=127.0.0.1/)
-      expect(stdout_spy).to have_received(:info).with('event=killer_block_party Blockless event user=john ip=127.0.0.1')
+      expect(stdout_spy).to have_received(:info).with('event="killer_block_party Blockless event" user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:info).with('Now without MDC.')
 
       expect(stdout_spy).to have_received(:debug).with('So fast and so quick!')
       expect(stdout_spy).to have_received(:info).with(/Block party w\/o MDC elapsed_time=0\.\d+/)
 
       expect(stdout_spy).to have_received(:debug).with("I'm in a block again!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party2 All summer strong elapsed_time=0\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party2 All summer strong" elapsed_time=0\.\d+/)
       expect(stdout_spy).to have_received(:debug).with("I'm in a block!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party3 All summer gone a=1 b=2 c=3 elapsed_time=10\d\d\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party3 All summer gone" a=1 b=2 c=3 elapsed_time=10\d\d\.\d+/)
     end
 
     it 'allows nested context to be cleared' do
@@ -505,14 +505,14 @@ module Woodsman
       expect(stdout_spy).to have_received(:debug).with('With NDC user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:info).with("I'm in a block! user=john ip=127.0.0.1")
       expect(stdout_spy).to have_received(:info).with(/Time block elapsed_time=0\.\d+ user=john ip=127.0.0.1/)
-      expect(stdout_spy).to have_received(:info).with('event=killer_block_party Blockless event user=john ip=127.0.0.1')
+      expect(stdout_spy).to have_received(:info).with('event="killer_block_party Blockless event" user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:info).with('Now without NDC.')
       expect(stdout_spy).to have_received(:debug).with('So fast and so quick!')
       expect(stdout_spy).to have_received(:info).with(/Block party w\/o NDC elapsed_time=0\.\d+/)
       expect(stdout_spy).to have_received(:debug).with("I'm in a block again!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party2 All summer strong elapsed_time=0\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party2 All summer strong" elapsed_time=0\.\d+/)
       expect(stdout_spy).to have_received(:debug).with("I'm in a block!")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party3 All summer gone a=1 b=2 c=3 elapsed_time=10\d\d\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party3 All summer gone" a=1 b=2 c=3 elapsed_time=10\d\d\.\d+/)
     end
 
     it 'allows mixed context to be cleared' do
@@ -539,11 +539,11 @@ module Woodsman
       expect(stdout_spy).to have_received(:debug).with('With MDC and NDC user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:info).with("I'm in a block! user=john ip=127.0.0.1")
       expect(stdout_spy).to have_received(:info).with(/Time block elapsed_time=0\.\d+ user=john ip=127.0.0.1/)
-      expect(stdout_spy).to have_received(:info).with('event=killer_block_party Blockless event user=john ip=127.0.0.1')
+      expect(stdout_spy).to have_received(:info).with('event="killer_block_party Blockless event" user=john ip=127.0.0.1')
       expect(stdout_spy).to have_received(:debug).with("I'm in a block again! user=john ip=127.0.0.1")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party2 All summer strong elapsed_time=0\.\d+ user=john ip=127.0.0.1/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party2 All summer strong" elapsed_time=0\.\d+ user=john ip=127.0.0.1/)
       expect(stdout_spy).to have_received(:debug).with("I'm in a block! user=john ip=127.0.0.1")
-      expect(stdout_spy).to have_received(:info).with(/event=killer_block_party3 All summer gone a=1 b=2 c=3 elapsed_time=10\d\d\.\d+ user=john ip=127.0.0.1/)
+      expect(stdout_spy).to have_received(:info).with(/event="killer_block_party3 All summer gone" a=1 b=2 c=3 elapsed_time=10\d\d\.\d+ user=john ip=127.0.0.1/)
       expect(stdout_spy).to have_received(:info).with('Now without MDC and NDC.')
       expect(stdout_spy).to have_received(:debug).with('So fast and so quick!')
       expect(stdout_spy).to have_received(:info).with(/Block party w\/o MDC and NDC elapsed_time=0\.\d+/)
