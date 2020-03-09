@@ -6,11 +6,11 @@ require 'woodsman/version'
 Gem::Specification.new do |spec|
   spec.name = 'woodsman'
   spec.version = Woodsman::VERSION
-  spec.authors = ['GrowthHackers.com']
-  spec.email = ['tech@growthhackers.com']
+  spec.authors = ['Kind Systems']
+  spec.email = ['oss@kindsys.us']
   spec.description = %q{Ruby logging utility.}
   spec.summary = %q{Woodsman is a logger that can wrap Rails.logger.}
-  spec.homepage = 'https://growthhackers.com'
+  spec.homepage = 'https://kindness.dev'
   spec.license = 'MIT'
 
   spec.files = Dir.glob('lib/**/*')
@@ -18,12 +18,12 @@ Gem::Specification.new do |spec|
   spec.executables = Dir.glob('bin/*').map { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '< 6'
+  spec.add_dependency 'activesupport', '< 7'
   spec.add_dependency 'require_all', '~> 1.3'
   spec.add_dependency 'sentry-raven', '~> 2.3'
 
   spec.add_development_dependency 'guard-rspec', '~> 4.5'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '~> 12.3'
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.2'
   spec.add_development_dependency 'metric_fu', '~> 4.11'
