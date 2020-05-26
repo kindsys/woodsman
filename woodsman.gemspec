@@ -6,11 +6,11 @@ require 'woodsman/version'
 Gem::Specification.new do |spec|
   spec.name = 'woodsman'
   spec.version = Woodsman::VERSION
-  spec.authors = ['GrowthHackers.com']
-  spec.email = ['tech@growthhackers.com']
+  spec.authors = ['Kind Systems']
+  spec.email = ['oss@kindsys.us']
   spec.description = %q{Ruby logging utility.}
   spec.summary = %q{Woodsman is a logger that can wrap Rails.logger.}
-  spec.homepage = 'https://growthhackers.com'
+  spec.homepage = 'https://kindness.dev'
   spec.license = 'MIT'
 
   spec.files = Dir.glob('lib/**/*')
