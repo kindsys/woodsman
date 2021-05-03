@@ -46,9 +46,9 @@ module Woodsman
         end
       end
 
-      expect(stdout_spy).to have_received(:info).with(/event=layer3 elapsed_time=\d\.\d+/)
-      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d\.\d+/)
-      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer3 elapsed_time=\d+\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d+\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer1 elapsed_time=\d+\.\d+/)
       expect(stdout_spy).to have_received(:error).with(having_number_of_lines_less_than(10))
     end
 
