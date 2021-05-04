@@ -32,7 +32,7 @@ config/initializers/init_woodsman_logger.rb:
   #Rails.logger = Woodsman.logger = Woodsman::Logger.new(Logger.new(STDOUT))
 
 ### Scrubber Stack
-Scrubbers are used by the logger to strike-out and/or silence un-wanted logging. We construct a default scrubber stack
+Scrubbers are used by the logger to strike-out and/or silence un-wanted logging. We construct a default scrubber stack 
 that includes silencing of health checks that pass, as that is fairly noisy if configured on a 1 minute interval.
 
 #### Scrubber
@@ -64,4 +64,12 @@ A scrubber must respond to the following:
   in the future - it is recommended to set the value to either true or 1 for now. To split a nested value, a corresponding
   nesting is necessary. For example, {primary_applicant: {ssn: 1}} would reach into the primary_applicant and split out the
   SSN. Finally, to support collections of objects represented by an array containing hashes, the following format will split
-  out the SSN of many applicants: {applicant: [{ssn:1}]}
+  out the SSN of many applicants: {applicant: [{ssn:1}]}  
+
+### require_all Gem
+We are now including a new gem for simplifying requiring files. We've done some preliminary vetting and it appears to 
+be useful. Currently we recommend only using the require_rel method that is mixed into the kernel namespace.
+
+require_rel 'lib' # Loads all ruby files in the directory "lib" and its subdirectories, relative to the directory the current file is in.
+
+For more information, go to https://github.com/jarmo/require_all
