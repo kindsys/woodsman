@@ -1,4 +1,4 @@
-require 'sentry-raven'
+require 'sentry-ruby'
 
 module Woodsman
   class LoggerWithSentry < Logger
@@ -8,16 +8,16 @@ module Woodsman
     end
 
     def error_exception(msg, e)
-      Raven.capture_exception(e) if Raven&.configuration&.server
-      msg, context = scrub("#{prefix(:error)}#{msg}#{ndc}#{mdc} exception=\"#{e}\" sentry_event_id=#{Raven&.last_event_id&.to_s} partial_backtrace=\"#{e.backtrace[0..2] * "\n"}\"")
+      Sentry.capture_exception(e) if Sentry&.initialized?
+      msg, context = scrub("#{prefix(:error)}#{msg}#{ndc}#{mdc} exception=\"#{e}\" sentry_event_id=#{Sentry&.last_event_id&.to_s} partial_backtrace=\"#{e.backtrace[0..2] * "\n"}\"")
       puts msg
       @logger.error(msg) if msg
       self
     end
 
     def fatal_exception(msg, e)
-      Raven.capture_exception(e) if Raven&.configuration&.server
-      msg, context = scrub("#{prefix(:fatal)}#{msg}#{ndc}#{mdc} exception=\"#{e}\" sentry_event_id=#{Raven&.last_event_id&.to_s} partial_backtrace=\"#{e.backtrace[0..2] * "\n"}\"")
+      Sentry.capture_exception(e) if Sentry&.initialized?
+      msg, context = scrub("#{prefix(:fatal)}#{msg}#{ndc}#{mdc} exception=\"#{e}\" sentry_event_id=#{Sentry&.last_event_id&.to_s} partial_backtrace=\"#{e.backtrace[0..2] * "\n"}\"")
       puts msg
       @logger.fatal(msg) if msg
       self

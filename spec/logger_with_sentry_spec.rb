@@ -33,6 +33,22 @@ module Woodsman
       expect(stdout_spy).to have_received(:fatal).with(/logger_with_sentry.*rb.*in `rescue in .*' oh noez, it was fatal! exception="fake error" sentry_event_id=.*/)
     end
 
+    it 'logs and captures exceptions if a sentry server is set up' do
+      allow(Sentry).to receive(:capture_exception)
+      Sentry.init do |config|
+        config.dsn = 'fakeDSN'
+      end
+
+      begin
+        raise 'fake error to be captured'
+      rescue => e
+        logger.error_exception 'An error was found.', e
+        logger.fatal_exception 'oh noez, it was fatal!', e
+      end
+
+      expect(Sentry).to have_received(:capture_exception).with(e).exactly(2).times
+    end
+
     it 'silences backtraces' do
       logger.event 'layer1' do
         logger.event 'layer2' do
@@ -46,9 +62,9 @@ module Woodsman
         end
       end
 
-      expect(stdout_spy).to have_received(:info).with(/event=layer3 elapsed_time=\d\.\d+/)
-      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d\.\d+/)
-      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer3 elapsed_time=\d+\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer2 elapsed_time=\d+\.\d+/)
+      expect(stdout_spy).to have_received(:info).with(/event=layer1 elapsed_time=\d+\.\d+/)
       expect(stdout_spy).to have_received(:error).with(having_number_of_lines_less_than(10))
     end
 
