@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
   spec.executables = Dir.glob('bin/*').map { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '~> 7.0'
+  spec.add_dependency 'activesupport', '~> 7.1'
   spec.add_dependency 'require_all', '~> 3.0'
-  spec.add_dependency 'sentry-ruby', '~> 4.4'
+  spec.add_dependency 'sentry-ruby', '~> 5'
 
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
   spec.add_development_dependency 'rake', '~> 13.0'
